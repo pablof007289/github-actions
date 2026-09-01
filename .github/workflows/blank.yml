@@ -1,65 +1,74 @@
-# This is a basic workflow to help you get started with Actions
-
+# Nombre del workflow
 name: Actividad GitHub Actions
 
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
+
+  # Se ejecuta cuando hay un push a la rama main
   push:
     branches: [ "main" ]
+
+  # Se ejecuta cuando hay un pull request hacia main
   pull_request:
     branches: [ "main" ]
 
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+# se definen los jobs del workflow
 jobs:
-  # This workflow contains a single job called "build"
+
+
   build:
-    # The type of runner that the job will run on
+
+    # Le dice en que sistema operativo se ejecuta
     runs-on: ubuntu-latest
 
-    env: 
-      plataforma: aws 
+    # Variables de entorno y secretos
+    env:
+      plataforma: aws
       region: america
       cuenta: desarrollador
       USER_NAME: ${{ secrets.NOMBRE_USUARIO }}
-      USER_PASS: ${{ secrets.password}}
+      USER_PASS: ${{ secrets.password }}
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
+    # Lista de pasos 
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+
+
       - uses: actions/checkout@v4
 
-      - name: Mostrar mensaje 
+      # muestra un mensaje
+      - name: Mostrar mensaje
         run: echo "Hola Mundo"
-      # Runs a single command using the runners shell
+
+      # Muestra las variables de entorno
       - name: Probando las variables de entorno
         run: |
           echo "Plataforma de despliegue: ${{ env.plataforma }}"
           echo "Región asignada: ${{ env.region }}"
           echo "Entorno de cuenta: ${{ env.cuenta }}"
 
-
-      - name: Debug del payload completo 
+      # Muestra información del evento que ejecuto el workflow en formato Json
+      - name: Debug del payload completo
         run: echo "${{ toJSON(github.event) }}"
 
-      - name: Mostrar metadatos Básicos 
-        run: | 
+      # Muestra metadatos del repositorio
+      - name: Mostrar metadatos Básicos
+        run: |
           echo "Usuario ejecutor: ${{ github.actor }}"
           echo "Repositorio activo: ${{ github.repository }}"
-      
+
+      # valida que existan el usuario y la contraseña
       - name: Validación de Credenciales
         if: env.USER_NAME != '' && env.USER_PASS != ''
-        run: | 
-          echo  "Estado: Credenciales de autenticación detectadas. Procediendo..."
-  
+        run: |
+          echo "Estado: Credenciales de autenticación detectadas. Procediendo..."
+
+      # Muestra variable global
       - name: Referencia a Variable Global
-        run: | 
+        run: |
           echo "Versión del proyecto: ${{ vars.PROJECT_VERSION }}"
 
-      # Runs a set of commands using the runners shell
+      # Ejecuta varios comandos de prueba
       - name: Run a multi-line script
         run: |
           echo Add other actions to build,
